@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis pendientes</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f4f4f5;
+    margin: 0;
+    padding: 24px 16px;
+    color: #18181b;
+  }
+  .app {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  p.sub { margin: 0 0 20px; color: #71717a; font-size: 14px; }
+  form { display: flex; gap: 8px; margin-bottom: 16px; }
+  input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d4d4d8;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  button.add {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #18181b;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 4px;
+    border-top: 1px solid #f4f4f5;
+  }
+  li span { flex: 1; }
+  li.done span { text-decoration: line-through; color: #a1a1aa; }
+  button.del {
+    border: none;
+    background: none;
+    color: #a1a1aa;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .counter { margin-top: 16px; color: #71717a; font-size: 13px; }
+  .empty { color: #a1a1aa; padding: 12px 4px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1>Mis pendientes</h1>
+    <p class="sub">Primer proyecto en conjunto: Kurt + Antigravity</p>
+    <form id="form">
+      <input id="input" type="text" placeholder="Escribe un pendiente..." autocomplete="off">
+      <button class="add" type="submit">Agregar</button>
+    </form>
+    <ul id="list"></ul>
+    <div class="counter" id="counter"></div>
+  </div>
+
+<script>
+  // Los pendientes se guardan en el navegador (localStorage).
+  // Próximas mejoras posibles: prioridades, filtros, fechas límite.
+  const KEY = "pendientes";
+  const list = document.getElementById("list");
+  const input = document.getElementById("input");
+  const counter = document.getElementById("counter");
+
+  let tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(tasks));
+  }
+
+  function render() {
+    list.innerHTML = "";
+    if (tasks.length === 0) {
+      list.innerHTML = '<li class="empty">No tienes pendientes. Agrega el primero.</li>';
+    }
+    tasks.forEach((task, i) => {
+      const li = document.createElement("li");
+      if (task.done) li.className = "done";
+
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      check.checked = task.done;
+      check.addEventListener("change", () => {
+        tasks[i].done = check.checked;
+        save();
+        render();
+      });
+
+      const span = document.createElement("span");
+      span.textContent = task.text;
+
+      const del = document.createElement("button");
+      del.className = "del";
+      del.textContent = "×";
+      del.title = "Eliminar";
+      del.addEventListener("click", () => {
+        tasks.splice(i, 1);
+        save();
+        render();
+      });
+
+      li.append(check, span, del);
+      list.appendChild(li);
+    });
+    const done = tasks.filter((t) => t.done).length;
+    counter.textContent = tasks.length
+      ? `${done} de ${tasks.length} completadas`
+      : "";
+  }
+
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    tasks.push({ text, done: false });
+    input.value = "";
+    save();
+    render();
+    input.focus();
+  });
+
+  render();
+</script>
+</body>
+</html>
