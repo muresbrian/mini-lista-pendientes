@@ -14,7 +14,7 @@
     color: #18181b;
   }
   .app {
-    max-width: 520px;
+    max-width: 560px;
     margin: 0 auto;
     background: #fff;
     border-radius: 12px;
@@ -23,119 +23,458 @@
   }
   h1 { margin: 0 0 4px; font-size: 24px; }
   p.sub { margin: 0 0 20px; color: #71717a; font-size: 14px; }
-  form { display: flex; gap: 8px; margin-bottom: 16px; }
+
+  form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
   input[type="text"] {
     flex: 1;
+    min-width: 200px;
     padding: 10px 12px;
     border: 1px solid #d4d4d8;
     border-radius: 8px;
     font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="text"]:focus {
+    border-color: #18181b;
+  }
+  select.select-priority {
+    padding: 10px 12px;
+    border: 1px solid #d4d4d8;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: #18181b;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select.select-priority:focus {
+    border-color: #18181b;
   }
   button.add {
-    padding: 10px 16px;
+    padding: 10px 18px;
     border: none;
     border-radius: 8px;
     background: #18181b;
     color: #fff;
     font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button.add:hover {
+    background: #27272a;
+  }
+
+  /* Filtros */
+  .filters-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #f4f4f5;
+  }
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #e4e4e7;
+    background: #f4f4f5;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #52525b;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover {
+    background: #e4e4e7;
+    color: #18181b;
+  }
+  .filter-btn.active {
+    background: #18181b;
+    color: #fff;
+    border-color: #18181b;
+  }
+  .badge-count {
+    background: rgba(0, 0, 0, 0.08);
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .filter-btn.active .badge-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+  .secondary-filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #71717a;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .priority-filter-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .priority-filter-box select {
+    padding: 4px 8px;
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fff;
+    color: #18181b;
     cursor: pointer;
   }
+
+  /* Lista de tareas */
   ul { list-style: none; margin: 0; padding: 0; }
   li {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 4px;
+    padding: 12px 6px;
     border-top: 1px solid #f4f4f5;
+    transition: background 0.15s;
   }
-  li span { flex: 1; }
-  li.done span { text-decoration: line-through; color: #a1a1aa; }
+  li:first-child { border-top: none; }
+  li:hover {
+    background: #fafafa;
+    border-radius: 8px;
+  }
+  li input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #18181b;
+  }
+  li .task-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  li .task-text {
+    flex: 1;
+    word-break: break-word;
+    font-size: 15px;
+  }
+  li.done .task-text {
+    text-decoration: line-through;
+    color: #a1a1aa;
+  }
+
+  /* Etiquetas de prioridad */
+  .tag-priority {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .tag-alta {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  .tag-media {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+  }
+  .tag-baja {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+  }
+  li.done .tag-priority {
+    opacity: 0.6;
+    filter: grayscale(40%);
+  }
+
   button.del {
     border: none;
     background: none;
     color: #a1a1aa;
-    font-size: 18px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 6px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: all 0.15s;
   }
-  .counter { margin-top: 16px; color: #71717a; font-size: 13px; }
-  .empty { color: #a1a1aa; padding: 12px 4px; }
+  button.del:hover {
+    color: #ef4444;
+    background: #fee2e2;
+  }
+
+  .footer-bar {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #f4f4f5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #71717a;
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .btn-clear-done {
+    background: none;
+    border: none;
+    color: #71717a;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .btn-clear-done:hover {
+    color: #dc2626;
+  }
+  .empty {
+    color: #a1a1aa;
+    padding: 24px 8px;
+    text-align: center;
+    font-size: 14px;
+  }
 </style>
 </head>
 <body>
   <div class="app">
     <h1>Mis pendientes</h1>
     <p class="sub">Primer proyecto en conjunto: Kurt + Antigravity</p>
+
     <form id="form">
       <input id="input" type="text" placeholder="Escribe un pendiente..." autocomplete="off">
+      <select id="priority" class="select-priority" title="Prioridad de la tarea">
+        <option value="baja">Baja</option>
+        <option value="media" selected>Media</option>
+        <option value="alta">Alta</option>
+      </select>
       <button class="add" type="submit">Agregar</button>
     </form>
+
+    <div class="filters-container">
+      <div class="filter-tabs">
+        <button type="button" class="filter-btn active" data-filter="todas">
+          Todas <span class="badge-count" id="count-all">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="pendientes">
+          Pendientes <span class="badge-count" id="count-pending">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="completadas">
+          Completadas <span class="badge-count" id="count-done">0</span>
+        </button>
+      </div>
+
+      <div class="secondary-filters">
+        <div class="priority-filter-box">
+          <label for="filter-priority">Prioridad:</label>
+          <select id="filter-priority">
+            <option value="todas">Todas las prioridades</option>
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <ul id="list"></ul>
-    <div class="counter" id="counter"></div>
+
+    <div class="footer-bar">
+      <div id="counter"></div>
+      <button id="clear-done-btn" class="btn-clear-done" type="button" style="display: none;">
+        Limpiar completadas
+      </button>
+    </div>
   </div>
 
 <script>
-  // Los pendientes se guardan en el navegador (localStorage).
-  // Próximas mejoras posibles: prioridades, filtros, fechas límite.
   const KEY = "pendientes";
   const list = document.getElementById("list");
   const input = document.getElementById("input");
+  const prioritySelect = document.getElementById("priority");
   const counter = document.getElementById("counter");
+  const clearDoneBtn = document.getElementById("clear-done-btn");
+  const priorityFilterSelect = document.getElementById("filter-priority");
+  const statusFilterBtns = document.querySelectorAll(".filter-btn");
 
-  let tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+  const countAll = document.getElementById("count-all");
+  const countPending = document.getElementById("count-pending");
+  const countDone = document.getElementById("count-done");
+
+  let currentStatusFilter = "todas";
+  let currentPriorityFilter = "todas";
+
+  // Cargar tareas asegurando retrocompatibilidad
+  let rawTasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+  let tasks = rawTasks.map((t) => ({
+    id: t.id || Date.now() + "-" + Math.random().toString(36).substr(2, 9),
+    text: t.text || "",
+    done: Boolean(t.done),
+    priority: t.priority || "media"
+  }));
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(tasks));
   }
 
+  function updateCounters() {
+    const total = tasks.length;
+    const done = tasks.filter((t) => t.done).length;
+    const pending = total - done;
+
+    countAll.textContent = total;
+    countPending.textContent = pending;
+    countDone.textContent = done;
+
+    counter.textContent = total
+      ? `${done} de ${total} completadas`
+      : "";
+
+    clearDoneBtn.style.display = done > 0 ? "inline" : "none";
+  }
+
+  function getFilteredTasks() {
+    return tasks.filter((task) => {
+      // Filtro por estado
+      if (currentStatusFilter === "pendientes" && task.done) return false;
+      if (currentStatusFilter === "completadas" && !task.done) return false;
+
+      // Filtro por prioridad
+      if (currentPriorityFilter !== "todas" && task.priority !== currentPriorityFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
   function render() {
+    updateCounters();
     list.innerHTML = "";
+
+    const filtered = getFilteredTasks();
+
     if (tasks.length === 0) {
-      list.innerHTML = '<li class="empty">No tienes pendientes. Agrega el primero.</li>';
+      list.innerHTML = '<li class="empty">No tienes pendientes. ¡Agrega el primero arriba!</li>';
+      return;
     }
-    tasks.forEach((task, i) => {
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<li class="empty">No hay pendientes que coincidan con los filtros seleccionados.</li>';
+      return;
+    }
+
+    filtered.forEach((task) => {
       const li = document.createElement("li");
       if (task.done) li.className = "done";
 
       const check = document.createElement("input");
       check.type = "checkbox";
       check.checked = task.done;
+      check.title = task.done ? "Marcar como pendiente" : "Marcar como completada";
       check.addEventListener("change", () => {
-        tasks[i].done = check.checked;
-        save();
-        render();
+        const target = tasks.find((t) => t.id === task.id);
+        if (target) {
+          target.done = check.checked;
+          save();
+          render();
+        }
       });
 
+      const content = document.createElement("div");
+      content.className = "task-content";
+
       const span = document.createElement("span");
+      span.className = "task-text";
       span.textContent = task.text;
+
+      const tag = document.createElement("span");
+      tag.className = `tag-priority tag-${task.priority || "media"}`;
+      tag.textContent = task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : "Media";
+
+      content.append(span, tag);
 
       const del = document.createElement("button");
       del.className = "del";
-      del.textContent = "×";
-      del.title = "Eliminar";
+      del.innerHTML = "&times;";
+      del.title = "Eliminar pendiente";
       del.addEventListener("click", () => {
-        tasks.splice(i, 1);
+        tasks = tasks.filter((t) => t.id !== task.id);
         save();
         render();
       });
 
-      li.append(check, span, del);
+      li.append(check, content, del);
       list.appendChild(li);
     });
-    const done = tasks.filter((t) => t.done).length;
-    counter.textContent = tasks.length
-      ? `${done} de ${tasks.length} completadas`
-      : "";
   }
 
+  // Manejo de envío de formulario
   document.getElementById("form").addEventListener("submit", (e) => {
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return;
-    tasks.push({ text, done: false });
+
+    tasks.push({
+      id: Date.now() + "-" + Math.random().toString(36).substr(2, 9),
+      text,
+      done: false,
+      priority: prioritySelect.value || "media"
+    });
+
     input.value = "";
+    prioritySelect.value = "media";
     save();
     render();
     input.focus();
+  });
+
+  // Filtros de estado (Todas / Pendientes / Completadas)
+  statusFilterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      statusFilterBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentStatusFilter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  // Filtro de prioridad (Todas / Alta / Media / Baja)
+  priorityFilterSelect.addEventListener("change", (e) => {
+    currentPriorityFilter = e.target.value;
+    render();
+  });
+
+  // Botón para limpiar completadas
+  clearDoneBtn.addEventListener("click", () => {
+    if (confirm("¿Estás seguro de que deseas eliminar todas las tareas completadas?")) {
+      tasks = tasks.filter((t) => !t.done);
+      save();
+      render();
+    }
   });
 
   render();

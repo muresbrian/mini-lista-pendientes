@@ -4,16 +4,18 @@ Primer proyecto en conjunto con **Kurt** y **Antigravity**, hecho desde cero par
 
 ## Qué hace
 
-Una lista de pendientes simple en una sola página (`index.html`):
+Una lista de pendientes interactiva en una sola página (`index.html`):
 
-- Agregar pendientes
-- Marcarlos como completados
-- Eliminarlos
-- Se guardan en el navegador (localStorage), así no se pierden al recargar
+- **Agregar pendientes con prioridades**: asigna prioridad Alta, Media o Baja a cada tarea.
+- **Filtros por estado**: visualiza *Todas*, sólo las *Pendientes* o sólo las *Completadas* con contadores en tiempo real.
+- **Filtros por prioridad**: filtra tus tareas por su nivel de urgencia o importancia.
+- **Marcarlos como completados** o desmarcarlos en cualquier momento.
+- **Eliminación individual o en bloque**: elimina tareas puntuales o usa el botón para limpiar todas las completadas.
+- **Persistencia local**: se guardan en el navegador (`localStorage`), conservando la información al recargar.
 
 ## Cómo probarla
 
-Abre `index.html` en el navegador. No necesita instalación ni servidor.
+Abre `index.html` en cualquier navegador web. No necesita instalación ni servidor.
 
 ## Cómo trabajamos aquí
 
@@ -23,6 +25,6 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor.
 
 ## Ideas para seguir
 
-- Prioridades (alta / media / baja)
-- Filtros: todas, pendientes, completadas
-- Fechas límite
+- Fechas límite (vencimientos)
+- Búsqueda en tiempo real por texto
+- Modo oscuro / claro
