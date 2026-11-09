@@ -197,7 +197,7 @@
     box-shadow: 0 0 0 2px rgba(24, 24, 27, 0.1);
   }
 
-  /* Etiquetas de prioridad y fechas */
+  /* Etiquetas de prioridad */
   .tag-priority {
     font-size: 11px;
     font-weight: 600;
@@ -226,26 +226,6 @@
   li.done .tag-priority {
     opacity: 0.6;
     filter: grayscale(40%);
-  }
-
-  .tag-date {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-    background: #f4f4f5;
-    color: #52525b;
-    border: 1px solid #e4e4e7;
-    flex-shrink: 0;
-  }
-  .tag-date.overdue {
-    background: #fee2e2;
-    color: #dc2626;
-    border-color: #fecaca;
-  }
-  li.done .tag-date {
-    opacity: 0.6;
   }
 
   /* Botones de acción */
@@ -388,26 +368,11 @@
     id: t.id || Date.now() + "-" + Math.random().toString(36).substr(2, 9),
     text: t.text || "",
     done: Boolean(t.done),
-    priority: t.priority || "media",
-    dueDate: t.dueDate || null
+    priority: t.priority || "media"
   }));
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(tasks));
-  }
-
-  function isOverdue(task) {
-    if (!task.dueDate || task.done) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return new Date(task.dueDate + "T00:00:00") < today;
-  }
-
-  function formatDate(iso) {
-    return new Date(iso + "T00:00:00").toLocaleDateString("es-MX", {
-      day: "numeric",
-      month: "short"
-    });
   }
 
   function updateCounters() {
@@ -460,7 +425,6 @@
     filtered.forEach((task) => {
       const li = document.createElement("li");
       if (task.done) li.className = "done";
-      if (isOverdue(task)) li.classList.add("overdue");
 
       const check = document.createElement("input");
       check.type = "checkbox";
@@ -545,14 +509,6 @@
         content.append(span, tag);
       }
 
-      if (task.dueDate) {
-        const dateTag = document.createElement("span");
-        dateTag.className = "tag-date" + (isOverdue(task) ? " overdue" : "");
-        dateTag.textContent = formatDate(task.dueDate);
-        dateTag.title = isOverdue(task) ? "Vencida" : "Fecha límite";
-        content.append(dateTag);
-      }
-
       const actions = document.createElement("div");
       actions.className = "task-actions";
 
@@ -593,8 +549,7 @@
       id: Date.now() + "-" + Math.random().toString(36).substr(2, 9),
       text,
       done: false,
-      priority: prioritySelect.value || "media",
-      dueDate: null
+      priority: prioritySelect.value || "media"
     });
 
     input.value = "";
