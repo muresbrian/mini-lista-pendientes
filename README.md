@@ -11,6 +11,7 @@ Una lista de pendientes interactiva en una sola página (`index.html`):
 - **Filtros por prioridad**: filtra tus tareas por su nivel de urgencia o importancia.
 - **Marcarlos como completados** o desmarcarlos en cualquier momento.
 - **Eliminación individual o en bloque**: elimina tareas puntuales o usa el botón para limpiar todas las completadas.
+- **Edición en línea de pendientes**: edita el texto de cualquier pendiente con doble clic sobre el texto o con el botón de lápiz (✎), guardando con Enter o al hacer clic fuera, y cancelando con Escape sin guardar.
 - **Persistencia local**: se guardan en el navegador (`localStorage`), conservando la información al recargar.
 
 ## Cómo probarla

@@ -163,6 +163,7 @@
     height: 18px;
     cursor: pointer;
     accent-color: #18181b;
+    flex-shrink: 0;
   }
   li .task-content {
     flex: 1;
@@ -175,13 +176,28 @@
     flex: 1;
     word-break: break-word;
     font-size: 15px;
+    cursor: pointer;
   }
   li.done .task-text {
     text-decoration: line-through;
     color: #a1a1aa;
   }
 
-  /* Etiquetas de prioridad */
+  /* Edición en línea */
+  .edit-input {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    border: 1px solid #18181b;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(24, 24, 27, 0.1);
+  }
+
+  /* Etiquetas de prioridad y fechas */
   .tag-priority {
     font-size: 11px;
     font-weight: 600;
@@ -190,6 +206,7 @@
     padding: 2px 8px;
     border-radius: 6px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .tag-alta {
     background: #fee2e2;
@@ -211,18 +228,55 @@
     filter: grayscale(40%);
   }
 
-  button.del {
+  .tag-date {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    background: #f4f4f5;
+    color: #52525b;
+    border: 1px solid #e4e4e7;
+    flex-shrink: 0;
+  }
+  .tag-date.overdue {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fecaca;
+  }
+  li.done .tag-date {
+    opacity: 0.6;
+  }
+
+  /* Botones de acción */
+  .task-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .btn-action {
     border: none;
     background: none;
     color: #a1a1aa;
-    font-size: 20px;
+    font-size: 15px;
     line-height: 1;
     padding: 4px 6px;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
-  button.del:hover {
+  .btn-action.edit:hover {
+    color: #2563eb;
+    background: #eff6ff;
+  }
+  .btn-action.del {
+    font-size: 19px;
+  }
+  .btn-action.del:hover {
     color: #ef4444;
     background: #fee2e2;
   }
@@ -326,6 +380,7 @@
 
   let currentStatusFilter = "todas";
   let currentPriorityFilter = "todas";
+  let editingTaskId = null;
 
   // Cargar tareas asegurando retrocompatibilidad
   let rawTasks = JSON.parse(localStorage.getItem(KEY) || "[]");
@@ -333,11 +388,26 @@
     id: t.id || Date.now() + "-" + Math.random().toString(36).substr(2, 9),
     text: t.text || "",
     done: Boolean(t.done),
-    priority: t.priority || "media"
+    priority: t.priority || "media",
+    dueDate: t.dueDate || null
   }));
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(tasks));
+  }
+
+  function isOverdue(task) {
+    if (!task.dueDate || task.done) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return new Date(task.dueDate + "T00:00:00") < today;
+  }
+
+  function formatDate(iso) {
+    return new Date(iso + "T00:00:00").toLocaleDateString("es-MX", {
+      day: "numeric",
+      month: "short"
+    });
   }
 
   function updateCounters() {
@@ -390,6 +460,7 @@
     filtered.forEach((task) => {
       const li = document.createElement("li");
       if (task.done) li.className = "done";
+      if (isOverdue(task)) li.classList.add("overdue");
 
       const check = document.createElement("input");
       check.type = "checkbox";
@@ -407,27 +478,107 @@
       const content = document.createElement("div");
       content.className = "task-content";
 
-      const span = document.createElement("span");
-      span.className = "task-text";
-      span.textContent = task.text;
-
       const tag = document.createElement("span");
       tag.className = `tag-priority tag-${task.priority || "media"}`;
       tag.textContent = task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : "Media";
 
-      content.append(span, tag);
+      if (editingTaskId === task.id) {
+        // Modo edición en línea
+        const editInput = document.createElement("input");
+        editInput.type = "text";
+        editInput.className = "edit-input";
+        editInput.value = task.text;
+
+        let isCanceling = false;
+
+        function commitEdit() {
+          if (isCanceling) return;
+          const newText = editInput.value.trim();
+          if (newText) {
+            const target = tasks.find((t) => t.id === task.id);
+            if (target) {
+              target.text = newText;
+              save();
+            }
+          }
+          editingTaskId = null;
+          render();
+        }
+
+        function cancelEdit() {
+          isCanceling = true;
+          editingTaskId = null;
+          render();
+        }
+
+        editInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            commitEdit();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            cancelEdit();
+          }
+        });
+
+        editInput.addEventListener("blur", () => {
+          commitEdit();
+        });
+
+        content.append(editInput, tag);
+
+        setTimeout(() => {
+          editInput.focus();
+          editInput.select();
+        }, 0);
+      } else {
+        // Modo visualización normal
+        const span = document.createElement("span");
+        span.className = "task-text";
+        span.textContent = task.text;
+        span.title = "Doble clic para editar";
+        span.addEventListener("dblclick", () => {
+          editingTaskId = task.id;
+          render();
+        });
+
+        content.append(span, tag);
+      }
+
+      if (task.dueDate) {
+        const dateTag = document.createElement("span");
+        dateTag.className = "tag-date" + (isOverdue(task) ? " overdue" : "");
+        dateTag.textContent = formatDate(task.dueDate);
+        dateTag.title = isOverdue(task) ? "Vencida" : "Fecha límite";
+        content.append(dateTag);
+      }
+
+      const actions = document.createElement("div");
+      actions.className = "task-actions";
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "btn-action edit";
+      editBtn.innerHTML = "&#9998;";
+      editBtn.title = "Editar pendiente";
+      editBtn.addEventListener("click", () => {
+        editingTaskId = task.id;
+        render();
+      });
 
       const del = document.createElement("button");
-      del.className = "del";
+      del.className = "btn-action del";
       del.innerHTML = "&times;";
       del.title = "Eliminar pendiente";
       del.addEventListener("click", () => {
         tasks = tasks.filter((t) => t.id !== task.id);
+        if (editingTaskId === task.id) editingTaskId = null;
         save();
         render();
       });
 
-      li.append(check, content, del);
+      actions.append(editBtn, del);
+
+      li.append(check, content, actions);
       list.appendChild(li);
     });
   }
@@ -442,7 +593,8 @@
       id: Date.now() + "-" + Math.random().toString(36).substr(2, 9),
       text,
       done: false,
-      priority: prioritySelect.value || "media"
+      priority: prioritySelect.value || "media",
+      dueDate: null
     });
 
     input.value = "";
